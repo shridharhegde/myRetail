@@ -1,7 +1,7 @@
-package com.target.myretail.service;
+package com.myretail.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.target.myretail.model.ProductDetails;
+import com.myretail.model.ProductDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

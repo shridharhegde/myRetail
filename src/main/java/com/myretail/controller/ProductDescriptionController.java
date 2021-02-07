@@ -1,10 +1,10 @@
-package com.target.myretail.controller;
+package com.myretail.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/products")
-public class ProductDetailsController {
+@RequestMapping("/")
+public class ProductDescriptionController {
 
 }

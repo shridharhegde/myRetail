@@ -1,4 +1,4 @@
-package com.target.myretail.config;
+package com.myretail.config;
 
 
 import org.springframework.beans.factory.annotation.Value;
