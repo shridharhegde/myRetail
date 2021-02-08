@@ -3,6 +3,7 @@
 ## Requirements
 * Java 8
 * Apache Maven 3.5.0 or higher
+* Redis server
 
 ## How to Run
 
