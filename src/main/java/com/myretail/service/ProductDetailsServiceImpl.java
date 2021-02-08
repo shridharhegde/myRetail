@@ -21,8 +21,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class ProductDetailsServiceImpl implements ProductDetailsService {
 
-  private static final String PRODUCT = "PRODUCT";
-
   @Autowired
   ObjectMapper mapper;
 
