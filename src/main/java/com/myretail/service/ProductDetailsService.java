@@ -8,5 +8,5 @@ public interface ProductDetailsService {
 
   ProductDetails getProductDetails(long productId);
 
-  void updateProductDetails(ProductDetails productDetails);
+  void updateProductPriceDetails(ProductDetails productDetails, long productId);
 }

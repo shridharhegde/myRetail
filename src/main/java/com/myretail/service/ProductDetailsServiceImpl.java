@@ -9,7 +9,6 @@ import com.myretail.model.ProductDetails.CurrentPrice;
 import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -27,13 +26,10 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
   ObjectMapper mapper;
 
   @Autowired
-  RedisConfiguration<Object> redisConfiguration;
+  RedisConfiguration<CurrentPrice> redisConfiguration;
 
   @Autowired
   ProductDescriptionServiceConfig productDescriptionServiceConfig;
-
-  @Autowired
-  RedisTemplate<String, String> redisTemplate;
 
   @Override
   @Transactional
@@ -55,8 +51,14 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
   @Override
   @Transactional
-  public void updateProductDetails(ProductDetails productDetails) {
-
+  public void updateProductPriceDetails(ProductDetails productDetails, long productId) {
+    if (Optional.ofNullable(productDetails).isPresent() && Optional
+        .ofNullable(productDetails.getCurrent_price()).isPresent()) {
+      redisConfiguration.redisTemplate().opsForHash()
+          .put(PRODUCT, String.valueOf(productId), productDetails.getCurrent_price());
+    } else {
+      throw new ApplicationException("Price details can not be empty");
+    }
   }
 
   private ProductDetails getProductDescription(long productId) {
