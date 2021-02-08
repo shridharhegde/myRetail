@@ -16,7 +16,9 @@ public class ProductDetails implements Serializable {
   private String name;
   private CurrentPrice current_price;
 
-  public static class CurrentPrice {
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  @Data
+  public static class CurrentPrice implements Serializable {
 
     private double value;
     private String currency_code;

@@ -10,3 +10,7 @@ server:
   servlet:
     context-path: /myretail
 
+product-description:
+  api:
+    host: http://localhost:8080
+    productDescription: /myretail/products/description/{productId}
