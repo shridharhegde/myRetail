@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 @Service
 public class ProductDescriptionServiceImpl implements ProductDescriptionService {
 
+
+  private static final String PRODUCT_DETAILS = "[{\"id\":13860428,\"name\":\"The Big Lebowski (Blu-ray) (Widescreen)\"},{\"id\":15117729,\"name\":\"iPhone SE\"},{\"id\":16483589,\"name\":\"iPhone XR\"},{\"id\":16696652,\"name\":\"iPhone 11\"},{\"id\":16752456,\"name\":\"Samsung A21\"}]";
 
   @Autowired
   ObjectMapper mapper;
@@ -27,7 +28,7 @@ public class ProductDescriptionServiceImpl implements ProductDescriptionService 
     try {
       List<ProductDetails> productDetailsList = Arrays
           .asList(
-              mapper.readValue(ResourceUtils.getFile("classpath:product_details.json"),
+              mapper.readValue(PRODUCT_DETAILS,
                   ProductDetails[].class));
       if (Optional.ofNullable(productDetailsList).isPresent() && !productDetailsList.isEmpty()) {
         return productDetailsList.stream()

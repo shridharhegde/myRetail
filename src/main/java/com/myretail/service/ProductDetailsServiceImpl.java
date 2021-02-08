@@ -1,11 +1,12 @@
 package com.myretail.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myretail.config.ProductDescriptionServiceConfig;
-import com.myretail.config.RedisConfiguration;
 import com.myretail.exception.ApplicationException;
 import com.myretail.model.ProductDetails;
 import com.myretail.model.ProductDetails.CurrentPrice;
+import com.myretail.repository.PriceDetailsRepository;
 import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
   ObjectMapper mapper;
 
   @Autowired
-  RedisConfiguration<CurrentPrice> redisConfiguration;
+  PriceDetailsRepository priceDetailsRepository;
 
   @Autowired
   ProductDescriptionServiceConfig productDescriptionServiceConfig;
@@ -39,10 +40,13 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     }
     ProductDetails productDetails = getProductDescription(productId);
     if (Optional.ofNullable(productDetails).isPresent()) {
-      CurrentPrice currentPrice = (CurrentPrice) redisConfiguration.redisTemplate().opsForHash()
-          .get(PRODUCT, String.valueOf(productId));
-      if (Optional.ofNullable(currentPrice).isPresent()) {
-        productDetails.setCurrent_price(currentPrice);
+      Optional<String> currentPrice = priceDetailsRepository.get(String.valueOf(productId));
+      if (currentPrice.isPresent() && !currentPrice.get().isEmpty()) {
+        try {
+          productDetails.setCurrent_price(mapper.readValue(currentPrice.get(), CurrentPrice.class));
+        } catch (JsonProcessingException e) {
+          throw new ApplicationException("Unable to get price details");
+        }
       }
       return productDetails;
     }
@@ -54,8 +58,12 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
   public void updateProductPriceDetails(ProductDetails productDetails, long productId) {
     if (Optional.ofNullable(productDetails).isPresent() && Optional
         .ofNullable(productDetails.getCurrent_price()).isPresent()) {
-      redisConfiguration.redisTemplate().opsForHash()
-          .put(PRODUCT, String.valueOf(productId), productDetails.getCurrent_price());
+      try {
+        priceDetailsRepository.put(String.valueOf(productId),
+            mapper.writeValueAsString(productDetails.getCurrent_price()));
+      } catch (JsonProcessingException e) {
+        throw new ApplicationException("Unable to update price details");
+      }
     } else {
       throw new ApplicationException("Price details can not be empty");
     }
